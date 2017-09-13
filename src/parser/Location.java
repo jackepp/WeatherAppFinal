@@ -1,7 +1,7 @@
 package parser;
 
 /**
- * @author Jacob Permansson
+ * @author Jacob Permansson 2017-09-10
  *
  * This is just the location calss, where the properties of the locations objects are stored, and can be reached from its methods.
  */

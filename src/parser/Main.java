@@ -1,7 +1,7 @@
 package parser;
 
 /**
- * @author Jacob Permansson
+ * @author Jacob Permansson 2017-09-13
  *
  * This is the main class where we creates the objects and connects them together.
  *

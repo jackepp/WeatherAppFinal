@@ -1,9 +1,10 @@
 package gui;
 
 /**
- * @author Jacob Permansson
+ * @author Jacob Permansson 2017-09-13
  *
- * This is the view. This is what the user sees and interacts with.
+ * This is the view. This is what the user sees and interacts with. This class creates a window and all compontents related to it.
+ *
  */
 
 import reader.Controller;
@@ -43,17 +44,19 @@ public class GUI extends JFrame{
         panel.setLayout(null);
         //Create component
 
-        JButton button = new JButton("Show weather!");
-        JButton cacheButton = new JButton("Update cachetime");
+        JButton weatherButton = new JButton("Show weather!");
+        JButton cacheButton = new JButton("Save");
 
-        JLabel cacheLabel = new JLabel("Set cache time: YYYY-MM-DDTHH:MM");
-
-
-        JTextField cache = new JTextField();
+        JLabel cacheLabel = new JLabel("Cache time format: YYYY-MM-DDThh:mm");
 
 
-        JTextArea message = new JTextArea("");
-        JTextArea weather = new JTextArea("");
+        JTextField cacheTextField = new JTextField();
+
+
+        JTextField cacheMessage = new JTextField("");
+        cacheMessage.setEditable(false);
+        JTextField weather = new JTextField("");
+        weather.setEditable(false);
 
         JComboBox hoursList;
         String[] stringHourList = new String[24];
@@ -68,88 +71,80 @@ public class GUI extends JFrame{
 
         JLabel locationLabel = new JLabel("Choose your location:");
         JLabel hoursLabel = new JLabel("What time?");
-        Insets insets = panel.getInsets();
+
 
         //Add components to the panel
         panel.add(locationLabel);
         panel.add(locationList);
         panel.add(hoursLabel);
         panel.add(hoursList);
-        panel.add(button);
-        panel.add(cache);
+        panel.add(weatherButton);
+        panel.add(cacheTextField);
         panel.add(cacheLabel);
         panel.add(cacheButton);
-        panel.add(message);
+        panel.add(cacheMessage);
         panel.add(weather);
 
         //Location settings
 
         Dimension size = locationLabel.getPreferredSize();
-        locationLabel.setBounds(10 + insets.left, 15 + insets.top, size.width, size.height);
+        locationLabel.setBounds(10, 15, size.width, size.height);
 
         size = locationList.getPreferredSize();
-        locationList.setBounds(350 + insets.left, 10 + insets.top, size.width, size.height);
+        locationList.setBounds(150, 10, size.width, size.height);
 
         //Hours settings
 
         size = hoursLabel.getPreferredSize();
-        hoursLabel.setBounds(10 + insets.left, 50 + insets.top, size.width, size.height);
+        hoursLabel.setBounds(10 , 50 , size.width, size.height);
 
         size = hoursList.getPreferredSize();
-        hoursList.setBounds(350 + insets.left, 45 + insets.top, size.width, size.height);
+        hoursList.setBounds(150 , 45 , size.width, size.height);
 
-        //cache settings
+
 
         size = cacheLabel.getPreferredSize();
-        cacheLabel.setBounds(10 + insets.left, 200 + insets.top, size.width, size.height);
+        cacheLabel.setBounds(10, 135 , size.width, size.height);
 
-        size = cache.getPreferredSize();
-        cache.setBounds(130 + insets.left, 130 + insets.top, size.width+ 100, size.height);
+        size = cacheTextField.getPreferredSize();
+        cacheTextField.setBounds(10, 160 , size.width+120, size.height);
 
-        //Button settings
-
-        size = button.getPreferredSize();
-        button.setBounds(350 + insets.left, 130 + insets.top, size.width, size.height);
-
-        // cache button settings
-
-        size = cacheButton.getPreferredSize();
-       cacheButton.setBounds(90 + insets.left, 160 + insets.top, size.width, size.height);
-
-        // message settings
-
-        size = message.getPreferredSize();
-        message.setBounds(50 + insets.left, 220 + insets.top, size.width+ 200, size.height);
-
-        // weather settings
+        size = weatherButton.getPreferredSize();
+        weatherButton.setBounds(10, 100 , size.width, size.height);
 
         size = weather.getPreferredSize();
-        weather.setBounds(350 + insets.left, 220 + insets.top, size.width+ 50, size.height);
+        weather.setBounds(150 , 105, size.width+ 50, size.height);
+
+        size = cacheButton.getPreferredSize();
+        cacheButton.setBounds(40 , 200 , size.width, size.height);
+
+        size = cacheMessage.getPreferredSize();
+        cacheMessage.setBounds(150 , 205 , size.width+ 170, size.height);
 
 
 
-        button.addActionListener(new ActionListener() {
+
+       // handler for pressing show weather!
+
+        weatherButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                System.out.println("button pressed");
-                weather.setText(controller.search(
+                weather.setText(controller.searchTemperature(
                         locationList.getSelectedItem().toString(),
-                        hoursList.getSelectedItem().toString()));
+                        hoursList.getSelectedItem().toString()) + " C");
             }
 
+
+        //handler for pressing update cache! It has to be correct format to be valid. Error message shown if thats the case.
         });
         cacheButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 try {
-                    controller.updateCacheTime(cache.getText());
-                    message.setText("Cache time updated.");
+                    controller.saveCacheTime(cacheTextField.getText());
+                    cacheMessage.setText("Cache time saved.");
                 } catch (DateTimeParseException e) {
-                    System.out.println("cachetime not correct format");
-                    message.setText("Cachetime not correct format.");
+                    cacheMessage.setText("Cache time not correct format.");
                 }
             }
         });
     }
-    public static void main(String[] args) {
-    }
-
 }

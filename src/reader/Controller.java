@@ -8,7 +8,7 @@ import java.time.format.DateTimeParseException;
 
 
 /**
- * @author Jacob Permansson
+ * @author Jacob Permansson 2017-09-13
  *
  * This class is the controller. Its sort of a intermediary between the view and the model.
  *
@@ -21,11 +21,7 @@ public class Controller {
         this.parser = parser;
     }
 
-    public static void main(String[] args) {
-
-    }
-    public String search(String name, String time) {
-
+    public String searchTemperature(String name, String time) {
         String temp;
         System.out.println("Location: "+ name + ". Time: " + time);
 
@@ -42,8 +38,7 @@ public class Controller {
         return temp;
     }
 
-
-    public void updateCacheTime(String cacheTime) throws DateTimeParseException {
+    public void saveCacheTime(String cacheTime) throws DateTimeParseException {
         try{
             this.cacheTime = LocalDateTime.parse(cacheTime);
         } catch (DateTimeParseException e){

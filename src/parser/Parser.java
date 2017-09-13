@@ -21,7 +21,7 @@ import java.util.Objects;
 
 
 /**
- * @author Jacob Permansson
+ * @author Jacob Permansson 2017-09-13
  * This class is the model. Here does the saving and reading of data occur.
  *
  */
