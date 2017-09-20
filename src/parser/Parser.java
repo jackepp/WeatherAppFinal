@@ -26,21 +26,31 @@ import java.util.Objects;
  *
  */
 
-
-
 public class Parser {
-
-    private String name;
+    /**
+     * The locations will be saved in this array.
+     */
     private Location[] locations;
+    /**
+     * the date and with the format yyyy-MM-dd
+     */
     private static final DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * an emptry string reserved for the temp
+     */
+    private String temp = "";
 
+    /**
+     * Constructor
+     */
     public Parser(){
-        xmlParser();
+        parseLocations();
     }
 
+    /**
+     * Parsing the locations from places.xml*/
 
-
-    public void xmlParser(){
+    private void parseLocations(){
 
         locations = new Location[3];
 
@@ -61,10 +71,6 @@ public class Parser {
                             locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("altitude").getNodeValue(),
                             locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("latitude").getNodeValue(),
                             locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("longitude").getNodeValue());
-                    System.out.println("Name: " + locality.getAttribute("name"));
-                    System.out.println("Altitude: " + locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("altitude").getNodeValue());
-                    System.out.println("Latitude: " + locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("latitude").getNodeValue());
-                    System.out.println("Longtude: " + locality.getElementsByTagName("location").item(0).getAttributes().getNamedItem("longitude").getNodeValue());
                 }
             }
 
@@ -73,13 +79,23 @@ public class Parser {
         }
     }
 
+    /**
+     * Parsing the temperature for the selected time
+     * from the corresponding xml-file for the chosen location.
+     *
+     * @param name Selected location
+     * @param time Selected time
+     *
+     * @return temp Desired temperature (String)
+     *
+     * */
+
+
     public String getTemp(String name, String time) throws NullPointerException {
+
+        //This fixes the format of single digit time. 5:00 -> 05:00 for example.
+
         String newTime;
-        String temp  = "";
-
-
-        //the if/else code makes the time same format like 09:00 and 10:00. and not 9:00 etc.
-
         if(Integer.parseInt(time) < 10){
             newTime = "0" + time + ":00";
         }
@@ -87,16 +103,16 @@ public class Parser {
             newTime = time + ":00";
         }
 
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
 
             File xmlFile = new File(name + ".xml");
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(xmlFile);
-           doc.getDocumentElement().normalize();
+            doc.getDocumentElement().normalize();
             NodeList timeList = doc.getElementsByTagName("time");
 
+            //Getting tomorrows date
             Date dt = new Date();
             Calendar c = Calendar.getInstance();
             c.setTime(dt);
@@ -104,19 +120,15 @@ public class Parser {
             dt = c.getTime();
             String dateOfTomorrow = date.format(dt);
 
-
+            //Loops though the xml-file and returns the temp-value when it finds the correct temp
 
             for (int i = 0; i < timeList.getLength(); i++) {
                 Node l = timeList.item(i);
                 if (l.getNodeType() == Node.ELEMENT_NODE) {
                     Element timeElement = (Element) l;
                     String timeVar = dateOfTomorrow + "T" + newTime + ":00Z";
-
                     if (timeElement.getAttribute("to").equals(timeVar)&&(timeElement.getAttribute("to").equals(timeElement.getAttribute("from")))) {
-
                         temp = timeElement.getElementsByTagName("temperature").item(0).getAttributes().getNamedItem("value").getNodeValue();
-
-                        System.out.println("Temperatur för " + name + " klockan " + newTime + ": "+  temp);
                         return temp;
                     }
                 }
@@ -128,14 +140,22 @@ public class Parser {
 
     }
 
+    /**
+     * Downloads the weather data in a xml-file through a REST-API.
+     *
+     * @param name The name the desired location
+     *
+     *
+     * */
+
     public void downloadFromYr(String name) {
         Location location = null;
 
         System.out.println("Executing downloadFromYr");
 
-        for (int i = 0; i < locations.length; i++) {
-            if (Objects.equals(locations[i].getName(), name)) {
-                location = locations[i];
+        for (Location location1 : locations) {
+            if (Objects.equals(location1.getName(), name)) {
+                location = location1;
                 System.out.println(location.getName());
             }
         }
@@ -148,8 +168,8 @@ public class Parser {
             connection.setRequestMethod("GET");
 
             int responseCode = connection.getResponseCode();
-            System.out.println("Sending 'GET' requets to URL");
-            System.out.println("Response code:" + responseCode);
+            //System.out.println("Sending 'GET' requets to URL");
+            //System.out.println("Response code:" + responseCode);
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -167,7 +187,4 @@ public class Parser {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-            }
 }

@@ -7,7 +7,7 @@ package gui;
  *
  */
 
-import reader.Controller;
+import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,62 +15,93 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.format.DateTimeParseException;
 
+
 public class GUI extends JFrame{
 
-   private JPanel panel;
-    Controller controller;
+    /**
+     * the panel
+     */
+    private JPanel panel;
+    /**
+     * the controller object
+     */
+    private Controller controller;
+    /**
+     * The dropdown lists
+     */
+    private JComboBox<String> locationList, hoursList;
+    /**
+     * The string lists shown in the dropdown lists
+     */
+    private String[] stringHourList, locations;
+    /**
+     * the labels
+     */
+    private JLabel locationLabel, hoursLabel, cacheLabel;
+    /**
+     * the text fields
+     */
+    private JTextField showWeather, cacheMessage, cacheTextField;
+    /**
+     * the buttons
+     */
+    private JButton weatherButton, cacheButton;
+    /**
+     * the frame / window
+     */
+    private JFrame frame;
 
+    /**
+     * the constructor. This is created when a new GUI object is created.
+     * @param controller the controller obj
+     */
     public GUI(Controller controller) {
         this.controller = controller;
-
         createUI();
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         frame.setTitle("Weather App");
         frame.setSize(500, 300);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocation(200, 200);
         frame.add(panel);
     }
 
-    public void createUI() {
+    /**
+     * Creates the interface.
+     */
+
+    private void createUI() {
 
         panel = new JPanel();
         panel.setSize(400, 250);
-
-
-        //Set layout manager
         panel.setLayout(null);
-        //Create component
-
-        JButton weatherButton = new JButton("Show weather!");
-        JButton cacheButton = new JButton("Save");
-
-        JLabel cacheLabel = new JLabel("Cache time format: YYYY-MM-DDThh:mm");
 
 
-        JTextField cacheTextField = new JTextField();
+        // Create all the components
 
+        locations = new String[]{"Skelleftea", "Kage", "Stockholm"};
+        locationList = new JComboBox<>(locations);
 
-        JTextField cacheMessage = new JTextField("");
-        cacheMessage.setEditable(false);
-        JTextField weather = new JTextField("");
-        weather.setEditable(false);
-
-        JComboBox hoursList;
-        String[] stringHourList = new String[24];
+        stringHourList = new String[24];
         for (int i = 0; i < 24; i++) {
             stringHourList[i] = Integer.toString(i);
         }
-        hoursList = new JComboBox(stringHourList);
 
-        JComboBox locationList;
-        String[] locations = {"Skelleftea", "Kage", "Stockholm"};
-        locationList = new JComboBox(locations);
+        hoursList = new JComboBox<>(stringHourList);
+        locationLabel = new JLabel("Choose your location:");
+        hoursLabel = new JLabel("What time?");
 
-        JLabel locationLabel = new JLabel("Choose your location:");
-        JLabel hoursLabel = new JLabel("What time?");
+        showWeather = new JTextField("");
+        showWeather.setEditable(false);
+        weatherButton = new JButton("Show weather!");
+
+        cacheButton = new JButton("Save");
+        cacheLabel = new JLabel("Cache time format: YYYY-MM-DDThh:mm");
+        cacheTextField = new JTextField();
+        cacheMessage = new JTextField("");
+        cacheMessage.setEditable(false);
 
 
         //Add components to the panel
@@ -83,9 +114,10 @@ public class GUI extends JFrame{
         panel.add(cacheLabel);
         panel.add(cacheButton);
         panel.add(cacheMessage);
-        panel.add(weather);
+        panel.add(showWeather);
 
-        //Location settings
+
+        //Placements of the components on the panel
 
         Dimension size = locationLabel.getPreferredSize();
         locationLabel.setBounds(10, 15, size.width, size.height);
@@ -93,15 +125,11 @@ public class GUI extends JFrame{
         size = locationList.getPreferredSize();
         locationList.setBounds(150, 10, size.width, size.height);
 
-        //Hours settings
-
         size = hoursLabel.getPreferredSize();
         hoursLabel.setBounds(10 , 50 , size.width, size.height);
 
         size = hoursList.getPreferredSize();
         hoursList.setBounds(150 , 45 , size.width, size.height);
-
-
 
         size = cacheLabel.getPreferredSize();
         cacheLabel.setBounds(10, 135 , size.width, size.height);
@@ -112,8 +140,8 @@ public class GUI extends JFrame{
         size = weatherButton.getPreferredSize();
         weatherButton.setBounds(10, 100 , size.width, size.height);
 
-        size = weather.getPreferredSize();
-        weather.setBounds(150 , 105, size.width+ 50, size.height);
+        size = showWeather.getPreferredSize();
+        showWeather.setBounds(150 , 105, size.width+ 50, size.height);
 
         size = cacheButton.getPreferredSize();
         cacheButton.setBounds(40 , 200 , size.width, size.height);
@@ -121,18 +149,14 @@ public class GUI extends JFrame{
         size = cacheMessage.getPreferredSize();
         cacheMessage.setBounds(150 , 205 , size.width+ 170, size.height);
 
-
-
-
-       // handler for pressing show weather!
+       // This happens when Show Weather button is pressed.
 
         weatherButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                weather.setText(controller.searchTemperature(
+                showWeather.setText(controller.searchTemperature(
                         locationList.getSelectedItem().toString(),
                         hoursList.getSelectedItem().toString()) + " C");
             }
-
 
         //handler for pressing update cache! It has to be correct format to be valid. Error message shown if thats the case.
         });

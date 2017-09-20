@@ -7,9 +7,12 @@ package parser;
  *
  */
 
-import reader.Controller;
+import controller.Controller;
 import gui.GUI;
 
+/**
+ *This is the main class where we create the objects and connects them together.
+ */
 public class Main {
 
     public static void main(String[] args) {
